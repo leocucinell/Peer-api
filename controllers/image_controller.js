@@ -1,7 +1,9 @@
 /* SECTION: Modules */
 const { Image } = require("../models");
 const s3 = require("../config/s3");
-
+const fs = require("fs");
+const util = require("util");
+const unlinkFile = util.promisify(fs.unlink);
 
 /* SECTION: Middleware */
 
@@ -21,6 +23,10 @@ const uploadImage = async (req, res, next) => {
         }
         const createdImage = await Image.create(imageObj);
 
+        //delete image file from server:
+        await unlinkFile(req.file.path);
+
+        //return json
         return res.status(200).json({
             msg: "successfully uploaded file to s3",
             file: createdImage
@@ -53,11 +59,39 @@ const getImage = async (req, res, next) => {
         });
     }
 }
+
 //update an image
+const updateImage = async (req, res, next) => {
+
+}
+
 //delete an image
+const deleteImage = async (req, res, next) => {
+    try{
+        //retrieve the imageObj from the database
+        const imageObj = await Image.findByIdAndDelete(req.body.imageObj);
+
+        const returned = await s3.deleteFileFromS3(imageObj.filename);
+
+        //return the image object
+        return res.status(200).json({
+            msg: "successfully deleted image",
+            imageObj,
+            s3Info: returned
+        });
+
+    } catch(err) {
+        return res.status(400).json({
+            msg: "unable to delete image",
+            error: err
+        });
+    }
+}
 
 /* SECTION: Export */
 module.exports = {
     uploadImage,
     getImage,
+    updateImage,
+    deleteImage
 }
