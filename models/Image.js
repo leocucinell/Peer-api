@@ -1,13 +1,17 @@
 const mongoose = require("mongoose");
 
 const imageSchema = new mongoose.Schema({
-    imageURL: {
+    filename: {
         type: String,
         required: [true, "Need a confirmed ARN for storage"]
     },
-    parentObject: {
-        type: mongoose.Types.ObjectId,
+    purpose: {
+        type: String,
         required: [true, "each image needs a purpose in the app"]
+    },
+    location: {
+        type: String,
+        required: [true, "you must provide an image loaction"]
     }
 });
 

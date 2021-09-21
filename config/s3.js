@@ -36,8 +36,17 @@ const uploadToS3 = (file) => {
 }
 
 //NOTE: Downloads a file to s3
+const retrieveImageFromS3 = (fileKey) => {
+    const downloadParams = {
+        Key: fileKey,
+        Bucket: bucketName
+    }
+
+    return s3.getObject(downloadParams).createReadStream();
+}
 
 /* SECTION: Exports */
 module.exports = {
     uploadToS3,
+    retrieveImageFromS3
 }
