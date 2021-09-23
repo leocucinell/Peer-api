@@ -1,5 +1,17 @@
 /* SECTION: Modules */
 const { Events } = require("../models");
+const { v4 } = require("uuid");
+
+const accessId = process.env.ID;
+const secretId = process.env.SECRET_ID;
+const Region = process.env.AWS_BUCKET_REGION;
+
+const AWS = require("aws-sdk");
+const db = new AWS.DynamoDB({
+    region: Region,
+    accessKeyId: accessId,
+    secretAccessKey: secretId
+})
 
 /* SECTION: Middleware */
 
@@ -18,6 +30,30 @@ const createEvent = async (req, res, next) => {
         })
     }
 }
+// const createEvent = async (req, res, next) => {
+//     const params = {
+//         TableName: "events",
+//         Item: {
+//             id: v4(),
+//             title: req.body.title,
+//             description: req.body.description,
+//             admin: req.body.admin,
+//             date: req.body.date,
+//             time: req.body.time,
+//             address: req.body.address
+//         }
+//     }
+
+
+//     db.putItem(params, (err, data) => {
+//         if(err){
+//             console.log(err)
+//             return err
+//         }
+//         console.log("SUCCESS " + data)
+//         return data
+//     })
+// }
 
 //get an event
 const getEvent = async (req, res, next) => {
